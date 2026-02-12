@@ -104,6 +104,9 @@ def generate_game_sessions(session, total_sessions=5_000_000, batch_size=10_000)
             # Random score between 100 and 10000
             score = random.randint(100, 10000)
             
+            # Random game mode (70% solo, 30% team)
+            game_mode = 'solo' if random.random() < 0.7 else 'team'
+            
             # Random time within last 30 days
             days_ago = random.randint(0, 30)
             played_at = datetime.now() - timedelta(days=days_ago, 
@@ -113,13 +116,14 @@ def generate_game_sessions(session, total_sessions=5_000_000, batch_size=10_000)
             sessions_data.append({
                 'user_id': user_id,
                 'score': score,
+                'game_mode': game_mode,
                 'played_at': played_at
             })
         
         # Batch insert
         insert_query = text("""
-            INSERT INTO game_sessions (user_id, score, played_at)
-            VALUES (:user_id, :score, :played_at)
+            INSERT INTO game_sessions (user_id, score, game_mode, played_at)
+            VALUES (:user_id, :score, :game_mode, :played_at)
         """)
         
         session.execute(insert_query, sessions_data)

@@ -18,7 +18,14 @@ class Settings(BaseSettings):
     # API
     api_host: str = "0.0.0.0"
     api_port: int = 8000
-    cors_origins: list = ["http://localhost:3000", "http://localhost:5173"]
+    cors_origins: list = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5173",
+        "http://localhost:8000",  # For Swagger UI
+        "http://127.0.0.1:8000",  # For Swagger UI
+    ]
     
     # New Relic
     new_relic_license_key: str = ""

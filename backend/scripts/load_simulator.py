@@ -26,7 +26,7 @@ class LoadSimulator:
         
     async def submit_score(self, session: aiohttp.ClientSession, user_id: int):
         """Submit a random score for a user."""
-        url = f"{self.base_url}/api/scores"
+        url = f"{self.base_url}/api/leaderboard/submit"
         payload = {
             "user_id": user_id,
             "score": random.randint(100, 10000)

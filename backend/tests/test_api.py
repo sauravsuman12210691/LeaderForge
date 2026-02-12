@@ -93,7 +93,7 @@ def test_root_endpoint():
 
 def test_health_check():
     """Test health check endpoint."""
-    response = client.get("/api/health")
+    response = client.get("/api/leaderboard/health")
     assert response.status_code == 200
     data = response.json()
     assert "status" in data
@@ -107,7 +107,7 @@ def test_health_check():
 def test_submit_score_success(sample_users):
     """Test successful score submission."""
     response = client.post(
-        "/api/scores",
+        "/api/leaderboard/submit",
         json={"user_id": 1, "score": 500}
     )
     assert response.status_code == 200
@@ -120,7 +120,7 @@ def test_submit_score_success(sample_users):
 def test_submit_score_creates_leaderboard_entry(sample_users):
     """Test that submitting score creates leaderboard entry."""
     response = client.post(
-        "/api/scores",
+        "/api/leaderboard/submit",
         json={"user_id": 1, "score": 1000}
     )
     assert response.status_code == 200
@@ -135,7 +135,7 @@ def test_submit_score_creates_leaderboard_entry(sample_users):
 def test_submit_score_invalid_user():
     """Test score submission with non-existent user."""
     response = client.post(
-        "/api/scores",
+        "/api/leaderboard/submit",
         json={"user_id": 999999, "score": 500}
     )
     assert response.status_code == 404
@@ -144,7 +144,7 @@ def test_submit_score_invalid_user():
 def test_submit_score_negative_score(sample_users):
     """Test score submission with negative score."""
     response = client.post(
-        "/api/scores",
+        "/api/leaderboard/submit",
         json={"user_id": 1, "score": -100}
     )
     assert response.status_code == 422  # Validation error
@@ -153,7 +153,7 @@ def test_submit_score_negative_score(sample_users):
 def test_submit_score_zero_score(sample_users):
     """Test score submission with zero score."""
     response = client.post(
-        "/api/scores",
+        "/api/leaderboard/submit",
         json={"user_id": 1, "score": 0}
     )
     assert response.status_code == 200
@@ -164,7 +164,7 @@ def test_submit_score_zero_score(sample_users):
 def test_submit_score_very_large_score(sample_users):
     """Test score submission with very large score."""
     response = client.post(
-        "/api/scores",
+        "/api/leaderboard/submit",
         json={"user_id": 1, "score": 2000000}
     )
     assert response.status_code == 422  # Should exceed validation limit
@@ -172,10 +172,10 @@ def test_submit_score_very_large_score(sample_users):
 
 def test_submit_score_missing_fields():
     """Test score submission with missing required fields."""
-    response = client.post("/api/scores", json={"user_id": 1})
+    response = client.post("/api/leaderboard/submit", json={"user_id": 1})
     assert response.status_code == 422
     
-    response = client.post("/api/scores", json={"score": 500})
+    response = client.post("/api/leaderboard/submit", json={"score": 500})
     assert response.status_code == 422
 
 
@@ -183,7 +183,7 @@ def test_submit_multiple_scores_same_user(sample_users):
     """Test submitting multiple scores for same user."""
     # Submit first score
     response1 = client.post(
-        "/api/scores",
+        "/api/leaderboard/submit",
         json={"user_id": 1, "score": 500}
     )
     assert response1.status_code == 200
@@ -191,7 +191,7 @@ def test_submit_multiple_scores_same_user(sample_users):
     
     # Submit second score
     response2 = client.post(
-        "/api/scores",
+        "/api/leaderboard/submit",
         json={"user_id": 1, "score": 300}
     )
     assert response2.status_code == 200
@@ -337,7 +337,7 @@ def test_full_game_flow(sample_users):
     
     for user_id, score in scores:
         response = client.post(
-            "/api/scores",
+            "/api/leaderboard/submit",
             json={"user_id": user_id, "score": score}
         )
         assert response.status_code == 200
@@ -370,7 +370,7 @@ def test_concurrent_score_submissions(sample_users):
     responses = []
     for i in range(10):
         response = client.post(
-            "/api/scores",
+            "/api/leaderboard/submit",
             json={"user_id": 1, "score": 100}
         )
         responses.append(response)
@@ -393,7 +393,7 @@ def test_concurrent_score_submissions(sample_users):
 def test_invalid_user_id_format():
     """Test invalid user ID formats."""
     response = client.post(
-        "/api/scores",
+        "/api/leaderboard/submit",
         json={"user_id": "invalid", "score": 500}
     )
     assert response.status_code == 422
@@ -424,7 +424,7 @@ def test_api_response_time_submit_score(sample_users):
     
     start = time.time()
     response = client.post(
-        "/api/scores",
+        "/api/leaderboard/submit",
         json={"user_id": 1, "score": 500}
     )
     elapsed = (time.time() - start) * 1000  # Convert to ms
