@@ -108,7 +108,7 @@ GET /api/health
 
 ## Performance Testing
 
-### Load Simulation
+### Load Simulations
 
 Run the load simulator to test performance under load:
 
