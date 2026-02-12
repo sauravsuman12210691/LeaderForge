@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+// Use relative URL when running in Docker (via Vite proxy) or absolute URL for local dev
+// Vite proxy handles /api requests when VITE_API_URL is not set or empty
+const API_BASE_URL = import.meta.env.VITE_API_URL || ''
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -8,6 +10,7 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: false, // Set to true if using cookies/auth
 })
 
 // API functions
@@ -35,7 +38,7 @@ export const leaderboardAPI = {
 
   // Health check
   healthCheck: async () => {
-    const response = await apiClient.get('/api/health')
+    const response = await apiClient.get('/api/leaderboard/health')
     return response.data
   },
 }
